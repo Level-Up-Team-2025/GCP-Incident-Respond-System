@@ -1,0 +1,35 @@
+import base64
+import json
+import os
+from googleapiclient import discovery
+
+compute = discovery.build('compute', 'v1')
+
+def stop_vm(event, context):
+    try:
+        pubsub_message_str = base64.b64decode(event['data']).decode('utf-8')
+        incident_data = json.loads(pubsub_message_str)
+
+        print(f"Otrzymano wiadomość: {incident_data}")
+
+        if incident_data.get('incident', {}).get('state') != 'open':
+            print("Ignorowanie, alert nie jest nowy.")
+            return
+
+        labels = incident_data['incident']['resource']['labels']
+        instance_name = labels['instance_name']
+        zone = labels['zone']
+        project = labels['project_id']
+
+        print(f"ALERT P2: Wykryto wysokie CPU na instancji: {instance_name} w strefie {zone}")
+
+        request = compute.instances().stop(
+            project=project,
+            zone=zone,
+            instance=instance_name
+        )
+        response = request.execute()
+        print(f"Polecenie wysłane. Odpowiedź API: {response}")
+
+    except Exception as e:
+        print(f"BŁĄD KRYTYCZNY: {e}")

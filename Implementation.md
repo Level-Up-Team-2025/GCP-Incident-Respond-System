@@ -4,7 +4,7 @@
 
 Zawartość:
 
-```
+```bash
 sudo apt install -y telnet
 
 sudo apt install -y nginx
@@ -98,7 +98,7 @@ poniżej na wszystkich VM.
 
 To samo dla wszystkich VM:
 
-```
+```bash
 curl -sSO
 https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh
 
@@ -109,7 +109,7 @@ sudo bash add-google-cloud-ops-agent-repo.sh --also-install
 
 ### Sprawdzenie:
 
-```
+```bash
 sudo systemctl status google-cloud-ops-agent
 ```
 
@@ -251,7 +251,7 @@ Tworząc politykę alertowania wybrano wcześniej stworzoną metrykę opartą o 
 
 ![](images/image4.png)
 
-Następnie ustawiamy wartości _Rolling window time_ na *1 hr* oraz _rollling window_ na *sum*. Rolling window time określa, ile minut/danych jest branych pod uwagę, a rolling window function mówi, jak te dane mają być połączone lub przetworzone, by ustalić, czy warunek alertu jest spełniony.
+Następnie ustawiamy wartości _Rolling window time_ na **1 hr** oraz _rollling window_ na **sum**. Rolling window time określa, ile minut/danych jest branych pod uwagę, a rolling window function mówi, jak te dane mają być połączone lub przetworzone, by ustalić, czy warunek alertu jest spełniony.
 
 ![](images/image52.png)
 
