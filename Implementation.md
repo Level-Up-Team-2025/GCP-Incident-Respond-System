@@ -6,22 +6,11 @@ Zawartość:
 
 ```bash
 sudo apt install -y telnet
-
 sudo apt install -y nginx
-
 sudo systemctl enable nginx
-
 sudo chmod -R 755 /var/www/html
-
-HOSTNAME=\$(hostname)
-
-sudo echo \"\<!DOCTYPE html\> \<html\> \<body
-style=\'background-color:rgb(240, 128, 128);\'\> \<h1\> Project 5:
-Logging, Monitoring and Incident Response System &#128568; \</h1\>
-\<p\>\<strong\>VM Hostname:\</strong\> \$HOSTNAME\</p\>
-\<p\>\<strong\>VM IP Address:\</strong\> \$(hostname -I)\</p\>
-\<p\>\<strong\>Application Version:\</strong\> V1\</p\>
-\</body\>\</html\>\" \| sudo tee /var/www/html/index.html
+HOSTNAME=$(hostname)
+sudo echo "<!DOCTYPE html> <html> <body style='background-color:rgb(240, 128, 128);'> <h1> Project 5: Logging, Monitoring and Incident Response System &#128568; </h1> <p><strong>VM Hostname:</strong> $HOSTNAME</p> <p><strong>VM IP Address:</strong> $(hostname -I)</p> <p><strong>Application Version:</strong> V1</p> </body></html>" | sudo tee /var/www/html/index.html
 ```
 
 ![img](images/image29.png)
