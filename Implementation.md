@@ -193,24 +193,15 @@ sudo systemctl status google-cloud-ops-agent
 
 ##### Incydent Nginx (Zamknięty):
 
-- *Powód:* Ten alert został wywołany przez chwilowy wzrost liczby
-  błędów (metryka nginx_error_count była \> 0). W następnej minucie nie
-  było już błędów, więc metryka wróciła do normy (do 0).
-- *Wniosek:* System zobaczył, że warunek alertu nie jest już
-  spełniony (problem zniknął), więc automatycznie zamknął
-  incydent.
+- *Powód:* Ten alert został wywołany przez chwilowy wzrost liczby błędów (metryka nginx_error_count była \> 0). W następnej minucie nie było już błędów, więc metryka wróciła do normy (do 0).
+- *Wniosek:* System zobaczył, że warunek alertu nie jest już spełniony (problem zniknął), więc automatycznie zamknął incydent.
 
 ##### Incydenty CPU (Otwarte):
 
-- *Powód:* Ten alert został wywołany przez wysokie CPU (\> 80%).
-  To uruchomiło naszą automatyzację (Cloud Function), która wyłączyła
-  maszyny.
+- *Powód:* Ten alert został wywołany przez wysokie CPU (\> 80%). To uruchomiło naszą automatyzację (Cloud Function), która wyłączyła maszyny.
 - *Wniosek:* Maszyny przestały wysyłać jakiekolwiek metryki.
   System nigdy nie zobaczył, że CPU \"wróciło do normy\" (poniżej 80%).
-  Zamiast tego metryka po prostu zniknęła. System trzyma
-  incydent otwarty, aby poinformować nas, że problem nie został
-  rozwiązany \"naturalnie\", ale wymagał interwencji (wyłączenia
-  maszyny).
+  Zamiast tego metryka po prostu zniknęła. System trzyma incydent otwarty, aby poinformować nas, że problem nie został rozwiązany \"naturalnie\", ale wymagał interwencji (wyłączenia maszyny).
 
 ![](images/image25.png)
 
@@ -234,34 +225,21 @@ sudo systemctl status google-cloud-ops-agent
 
 ![](images/image8.png)
 
-Wpisujemy zapytanie SQL do wyświetlenia z naszego zbioru danych logi
-typu _nginx_error_. Dostajemy w wyniku 40 logów (po 20 logów z
-dwóch VM - zgadza się).
+Wpisujemy zapytanie SQL do wyświetlenia z naszego zbioru danych logi typu _nginx_error_. Dostajemy w wyniku 40 logów (po 20 logów z dwóch VM - zgadza się).
 
 ![](images/image57.png)
 
 ## Faza 5.1 Tworzenie dodatkowego alertu niestandardowego request count.
 
-Wychodzimy z założenia, że nasza aplikacja będzie jedynie do użytku
-wewnętrznego przez mały zespół czteroosobowy więc nie spodziewamy się na
-niej dużego ruchu. Zależy nam jednak na jej dostępności.  W tym celu,
-aby wiedzieć czy nasza aplikacja nie ma znacznie większego ruchu niż
-zazwyczaj skonfigurujemy alert, informujący nas o tym, że ilość
-requestów HTTP GET lub post jest większa niż 500 w przeciągu godziny.
+Wychodzimy z założenia, że nasza aplikacja będzie jedynie do użytku wewnętrznego przez mały zespół czteroosobowy więc nie spodziewamy się na niej dużego ruchu. Zależy nam jednak na jej dostępności.  W tym celu, aby wiedzieć czy nasza aplikacja nie ma znacznie większego ruchu niż zazwyczaj skonfigurujemy alert, informujący nas o tym, że ilość requestów HTTP GET lub post jest większa niż 500 w przeciągu godziny.
 
-Bardzo istotnym krokiem przed wykonaniem kolejnych jest instalacja Ops
-Agenta oraz konfiguracja w /etc/google-cloud-ops-agent/config.yaml
-odbiornik logów Nginxa. Ten etap został dokładnie opisany w _Fazie
-3_.
+Bardzo istotnym krokiem przed wykonaniem kolejnych jest instalacja Ops Agenta oraz konfiguracja w /etc/google-cloud-ops-agent/config.yaml odbiornik logów Nginxa. Ten etap został dokładnie opisany w _Fazie 3_.
 
-Następnie w pierwszej kolejności  należy utworzyć log-based metrics typu
-Counter o nazwie `custom.googleapis.com/nginx/request_count` dla
-projektu _lvl-up-logging_.
+Następnie w pierwszej kolejności  należy utworzyć log-based metrics typu Counter o nazwie `custom.googleapis.com/nginx/request_count` dla projektu _lvl-up-logging_.
 
 ![](images/image56.png)
 
-Następnie dodano filtr, który załapie podstawowe żądania HTTP,
-np.
+Następnie dodano filtr, który załapie podstawowe żądania HTTP, np.
 
 ![](images/image42.png)
 
@@ -269,16 +247,11 @@ Po utworzeniu metryki należy przygotować politykę alertowania.
 
 ![](images/image30.png)
 
-Tworząc politykę alertowania wybrano wcześniej stworzoną metrykę opartą
-o logi.
+Tworząc politykę alertowania wybrano wcześniej stworzoną metrykę opartą o logi.
 
 ![](images/image4.png)
 
-Następnie ustawiamy wartości _Rolling window time_ na *1
-hr* oraz _rollling window_ na *sum*. Rolling window
-time określa, ile minut/danych jest branych pod uwagę, a rolling window
-function mówi, jak te dane mają być połączone lub przetworzone, by
-ustalić, czy warunek alertu jest spełniony.
+Następnie ustawiamy wartości _Rolling window time_ na *1 hr* oraz _rollling window_ na *sum*. Rolling window time określa, ile minut/danych jest branych pod uwagę, a rolling window function mówi, jak te dane mają być połączone lub przetworzone, by ustalić, czy warunek alertu jest spełniony.
 
 ![](images/image52.png)
 
@@ -312,55 +285,38 @@ wysyła 1000 zapytań na adres każdej z trzech maszyn.
 
 `import requests`
 
-```
-from concurrent.futures import
-ThreadPoolExecutor, as_completed
+```python
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 urls = [
-
    "http://35.188.135.151/",
-
    "http://34.66.245.2/",
-
    "http://34.57.127.200/"
-
 ]
 
 num_requests_per_url = 1000
-
 max_workers = 20  # liczba jednoczesnych wątków
 
 def send_request (url):
-
    try:
-
-       response = requests.get(url,
-timeout=5)
-
+       response = requests.get(url, timeout=5)
        return url, response.status_code
 
    except Exception as e:
-
        return url, f"Error: {e}"
 
 def main ():
    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-
        futures = []
 
        for url in urls:
-
-           futures += executor.submit(send_request, url) for
-_ in range(num_requests_per_url)
+           futures += executor.submit(send_request, url) for _ in range(num_requests_per_url)
 
        for i, future in enumerate(as_completed(futures), 1):
-
            url, status = future.result()
-
            print(f"Request {i} to {url}: Status {status}")
 
 if __name__ == "__main__":
-
    main()
 ```
 
