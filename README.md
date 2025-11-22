@@ -14,5 +14,5 @@ This repository contains the complete execution log and technical documentation 
     * Screenshots documenting all configurations (Alert Policies, Cloud Function deployment, BigQuery Sink settings).
     * Verification of successful End-to-End tests (CPU alerts and automated VM shutdown).
 
-* **[Incident_Response_Plan.md](Incident_response_plan.md):**
+* **[Incident_Response_Plan.md](incident_response_plan.md):**
     Formal documentation of procedures for handling alerts and post-incident analysis.
