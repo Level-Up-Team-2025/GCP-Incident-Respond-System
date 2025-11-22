@@ -1,4 +1,4 @@
-## Faza 1: Dwie VM
+## Faza 1: Trzy VM
 
 ### 1. Tworzymy plik \*sh.
 
