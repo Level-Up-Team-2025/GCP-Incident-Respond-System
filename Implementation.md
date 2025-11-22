@@ -326,15 +326,15 @@ i działają zgodnie z założeniami.
 Tworzymy funkcję stop-vm-on-alert w Cloud Run Functions, która będzie zatrzymywała VM jeżeli Pub/Sub wyśle wiadomość o CPU >80% (na podstawie [KURS-GCP] Wysokie CPU na instancji).
 
 1. Włączamy następujące API: cloudfunctions, cloudbuild artifactregistry
-@1
+![](images/Picture1.png)
 2. Wybieramy Topic > alert-remediation-topic I klikamy Trigger Cloud Run function
-   @2
+![](images/Picture2.png)
 3. Tworzymy funkcję o nazwie stop-vm-on-alert w regionie us-central1 i zaznaczamy Retry on Failure
-   @3
+![](images/Picture3.png)
 4. Runtime, Build, Connections i Security and Image repo zostawiamy na default
 
 5.	W sekcji Source Code → Runtime ustaw Python 3.10 (lub nowszy). W polu Entry point wpisz stop-vm. Do pól z plikami main.py i requirements.txt wklej odpowiednią zawartość z repozytorium.
-  @4
+![](images/Picture4.png)
 
 6. Klikamy Deploy function
 
@@ -349,5 +349,6 @@ Tworzymy funkcję stop-vm-on-alert w Cloud Run Functions, która będzie zatrzym
 ![](images/image60.png)
 
 3. Sprawdzamy logi funkcji stop-vm-on-alert (log poniżej potwierdza, że funkcja została uruchomiona i wysłała polecenie dla zatrzymania vm-3-projekt5. Oznacza to, że Eventarc komunikuje się z Cloud Run i prasowanie alertu działa).
-   @5
-
+![](images/Picture5.png)
+4. Sprawdzamy kolejny log, który pokazuje że API zaakceptowało operację „stop”.
+![](images/Picture6.png)
