@@ -321,31 +321,24 @@ więcej niż 500, jak przedstawia jeden z powyższych screenów. Metryka,
 polityka oraz alertowanie zostały skonfigurowane i uruchomione poprawnie
 i działają zgodnie z założeniami.
 
-## Faza 6: Cloud Function
+## Faza 6.1: Cloud Function - tworzenie funkcji stop-vm-on-alert
 
-Tworzymy funkcję w Cloud Run Functions która będzie zatrzymywała VM
-jeżeli Pub/Sub wyśle wiadomość o \>80% CPU.
+Tworzymy funkcję stop-vm-on-alert w Cloud Run Functions, która będzie zatrzymywała VM jeżeli Pub/Sub wyśle wiadomość o CPU >80% (na podstawie [KURS-GCP] Wysokie CPU na instancji).
 
-1.  Włączamy następujące API:  cloudfunctions.googleapis.com \  
-    cloudbuild.googleapis.com \   artifactregistry.googleapis.com
-    stop-
+1. Włączamy następujące API: cloudfunctions, cloudbuild artifactregistry
+@1
+2. Wybieramy Topic > alert-remediation-topic I klikamy Trigger Cloud Run function
+   @2
+3. Tworzymy funkcję o nazwie stop-vm-on-alert w regionie us-central1 i zaznaczamy Retry on Failure
+   @3
+4. Runtime, Build, Connections i Security and Image repo zostawiamy na default
 
-2.  Tworzymy katalog w CLI "stop-vm-fn". W nim tworzymy plik
-    main.py z funkcją która zatrzymuje VM po otrzymaniu wiadomości z
-    Pub/Sub.
-3.  ![](images/image6.png)
-4.  2.2 W katalogu "stop-vm-fn" tworzymy plik requirements.txt
-5.  ![](images/image1.png)
-6.  2.3 Dodajemy uprawnienia IAM „Compute Instance Admin (v1)" do
-    domyślnego konta usługi Compute Engine, aby funkcja mogła
-    zatrzymywać maszyny wirtualne.
-7.  ![](images/image62.png)
-8.  2.4 Wdrażamy funkcję Cloud Function z bieżącego katalogu, ustawiamy
-    entrypoint, trigger Pub/Sub i konto serwisowe.
+5.	W sekcji Source Code → Runtime ustaw Python 3.10 (lub nowszy). W polu Entry point wpisz stop-vm. Do pól z plikami main.py i requirements.txt wklej odpowiednią zawartość z repozytorium.
+  @4
 
-![](images/image49.png)
+6. Klikamy Deploy function
 
-## Faza 7: Testowanie systemu
+## Faza 7: Testujemy stop-vm-on-alert
 
 1.  Łączymy się z VM przez SSH i instalujemy narzędzie stress
 
@@ -355,6 +348,6 @@ jeżeli Pub/Sub wyśle wiadomość o \>80% CPU.
 
 ![](images/image60.png)
 
-3.  Sprawdzamy CPU log - alert został otrzymany - sukces
-4.  Sprawdzamy maila - mail otrzymany - sukces
-5.  Sprawdzamy, czy VM została zatrzymana - sukces
+3. Sprawdzamy logi funkcji stop-vm-on-alert (log poniżej potwierdza, że funkcja została uruchomiona i wysłała polecenie dla zatrzymania vm-3-projekt5. Oznacza to, że Eventarc komunikuje się z Cloud Run i prasowanie alertu działa).
+   @5
+
